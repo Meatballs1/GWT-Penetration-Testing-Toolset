@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
 """
@@ -111,7 +110,7 @@ class GWTParser(object):
         
         elif self.burp:
             if not fuzz_idx in self.fuzzmarked:
-                self.rpc_list_fuzzable[fuzz_idx] = '§'+self.rpc_list_fuzzable[fuzz_idx]+'§'
+                self.rpc_list_fuzzable[fuzz_idx] = chr(167)+self.rpc_list_fuzzable[fuzz_idx]+chr(167)
                 
         else:
             self.rpc_list_fuzzable[fuzz_idx] = fuzz_value
@@ -718,56 +717,28 @@ class GWTParser(object):
             print( "Encountered Error During Parsing" )
     
     def get_fuzzstr(self):
-        fuzzstr = "|".join( self.rpc_list_fuzzable )+"|"
-        
-        if self.fout:   
-            self.fout.write( fuzzstr+"\n" )
-            
-        else:
-            print( "\nGWT RPC Payload Fuzz String\n" )
-            print( fuzzstr+"\n" )
+        return "|".join( self.rpc_list_fuzzable )+"|"
         
     '''
     Prints out the deserialized method call in a user friendly format
     '''
     def display(self):
-    
-        if self.fout:
-            self.fout.write("==================================\n")
-            self.fout.write(str("Serialized Object:").rjust(INDENTATION) + "\n" + self.rpc_string + "\n\n")
-            self.fout.write(str("Stream Version:").rjust(INDENTATION) + "\t" + str(self.stream_version)+"\n")
-            self.fout.write(str("Flags:").rjust(INDENTATION) + "\t" + str(self.flags+"\n"))
-            self.fout.write(str("Column Numbers:").rjust(INDENTATION) + "\t" + str(self.columns)+"\n")
-            self.fout.write(str("Host:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[0]+"\n")
-            self.fout.write(str("Hash:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[1]+"\n")
-            self.fout.write(str("Class Name:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[2]+"\n")
-            self.fout.write(str("Method:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[3] + "\n")
-            self.fout.write(str("# of Params:").rjust(INDENTATION) + "\t" + str(len(self.parameters)) + "\n")
-            self.fout.write(str("Parameters:").rjust(INDENTATION)+"\n")
-        else:   
-            print (str("\nSerialized Object:").rjust(INDENTATION) + "\n" + self.rpc_string + "\n")
-            print (str("Stream Version:").rjust(INDENTATION) + "\t" + str(self.stream_version))
-            print (str("Flags:").rjust(INDENTATION) + "\t" + str(self.flags))
-            print (str("Column Numbers:").rjust(INDENTATION) + "\t" + str(self.columns))
-            print (str("Host:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[0])
-            print (str("Hash:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[1])
-            print (str("Class Name:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[2])
-            print (str("Method:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[3])
-            print (str("# of Params:").rjust(INDENTATION) + "\t" + str(len(self.parameters)) + "\n")
-            print (str("Parameters:").rjust(INDENTATION))
+        out = ""
+        out += str("Serialized Object:").rjust(INDENTATION) + "\n" + self.rpc_string + "\n\n"
+        out += str("Stream Version:").rjust(INDENTATION) + "\t" + str(self.stream_version) + "\n"
+        out += str("Flags:").rjust(INDENTATION) + "\t" + str(self.flags) + "\n"
+        out += str("Column Numbers:").rjust(INDENTATION) + "\t" + str(self.columns) + "\n"
+        out += str("Host:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[0] + "\n"
+        out += str("Hash:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[1] + "\n"
+        out += str("Class Name:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[2] + "\n"
+        out += str("Method:").rjust(INDENTATION) + "\t" + self.rpc_deserialized[3] + "\n"
+        out += str("# of Params:").rjust(INDENTATION) + "\t" + str(len(self.parameters)) + "\n"
+        out += str("Parameters:").rjust(INDENTATION) + "\n"
         
         for parameter in self.parameters:
-            if self.fout:
-                pprint.pprint(parameter.__dict__, stream=self.fout, indent="1")
-            else:
-                pprint.pprint(parameter.__dict__, indent="1")
-             
-        print( "\n" )
-             
-        if self.fout:
-            self.fout.write( "\n" )
-        else:
-            print ("\n")
+            out += str(parameter.__dict__) +"\n"
+
+        return out
             
     def __init__( self ):
         self.burp = False
