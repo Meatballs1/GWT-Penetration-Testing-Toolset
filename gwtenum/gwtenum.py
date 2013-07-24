@@ -86,7 +86,10 @@ if __name__ == "__main__":
         handlers.append( urllib2.HTTPSHandler() )
     
     if options.proxy:
-        handlers.append( urllib2.ProxyHandler( {'http':'http://'+options.proxy}) )
+        handlers.append( urllib2.ProxyHandler( {
+            'http':options.proxy,
+            'https':options.proxy,
+            }))
         
     opener = urllib2.build_opener(*handlers)
     urllib2.install_opener( opener )
